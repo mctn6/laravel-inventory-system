@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -38,14 +39,26 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('description')->limit(50),
         ])
         ->actions([
+              // Edit Action
+              EditAction::make()
+              ->record(fn($record) => $record->id) // Assuming you want to edit by ID
+              ->successNotification(
+                  Notification::make()
+                      ->success()
+                      ->title('Category updated')
+                      ->body('The category has been updated successfully.')
+              ),
+            // Delete Action
             DeleteAction::make()
-                ->record(fn($record) => $record->name)
+                ->record(fn($record) => $record->id)
                 ->successNotification(
                     Notification::make()
-                         ->success()
-                         ->title('Category deleted')
-                         ->body('The category has been deleted successfully.'),
-                 )
+                        ->success()
+                        ->title('Category deleted')
+                        ->body('The category has been deleted successfully.')
+                ),
+            
+          
         ]);
     }
 
