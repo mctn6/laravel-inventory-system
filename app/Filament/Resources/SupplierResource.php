@@ -5,8 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Filament\Resources\SupplierResource\RelationManagers;
 use App\Models\Supplier;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -35,7 +38,27 @@ class SupplierResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('contact_info'),
-        ]);
+        ])
+        ->actions([
+            // Edit Action
+            EditAction::make()
+            ->record(fn($record) => $record->id) // Assuming you want to edit by ID
+            ->successNotification(
+                Notification::make()
+                    ->success()
+                    ->title('Supplier updated')
+                    ->body('The supllier has been updated successfully.')
+            ),
+          // Delete Action
+          DeleteAction::make()
+              ->record(fn($record) => $record->id)
+              ->successNotification(
+                  Notification::make()
+                      ->success()
+                      ->title('Supplier deleted')
+                      ->body('The supplier has been deleted successfully.')
+              ),
+      ]);
     }
 
     public static function getRelations(): array

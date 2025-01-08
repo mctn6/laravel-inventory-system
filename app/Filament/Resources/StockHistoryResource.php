@@ -7,8 +7,11 @@ use App\Filament\Resources\StockHistoryResource\RelationManagers;
 use App\Models\StockHistory;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -39,7 +42,27 @@ class StockHistoryResource extends Resource
                 Tables\Columns\TextColumn::make('quantity_change'),
                 Tables\Columns\TextColumn::make('reason'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
-        ]);
+        ])
+        ->actions([
+            // Edit Action
+            EditAction::make()
+            ->record(fn($record) => $record->id) // Assuming you want to edit by ID
+            ->successNotification(
+                Notification::make()
+                    ->success()
+                    ->title('Stock updated')
+                    ->body('The stock has been updated successfully.')
+            ),
+            // Delete Action
+            DeleteAction::make()
+                ->record(fn($record) => $record->id)
+                ->successNotification(
+                    Notification::make()
+                        ->success()
+                        ->title('Stock deleted')
+                        ->body('The stock has been deleted successfully.')
+            ),
+      ]);
     }
 
     public static function getRelations(): array
